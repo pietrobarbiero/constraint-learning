@@ -12,8 +12,8 @@ from torch.utils.data import Subset, Dataset
 from torchvision.datasets import ImageFolder, VisionDataset
 from torchvision.models import resnet50
 from shutil import copyfile
-from .class_1_hots import CLASS_1_HOTS
-from .utils import find_folder, show_batch
+from class_1_hots import CLASS_1_HOTS
+from utils import find_folder, show_batch
 
 ANIMAL_DATASET      = "animals"
 ANIMAL_DATASET_GRAY = "animals_gray"

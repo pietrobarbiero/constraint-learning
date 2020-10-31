@@ -8,13 +8,13 @@ import torchvision
 from tqdm import tqdm
 from torchvision import transforms
 
-from . import dataset_loader as dl
+import dataset_loader as dl
 from torch.utils.data import Dataset
 from sklearn.metrics import f1_score
 from abc import ABC, abstractmethod
-from .constraint_losses import winston_loss, cifar100_loss, pascalpart_loss
-from .dataset_loader import SemiSupDataset
-from .utils import Progbar, find_folder, show_batch
+from constraint_losses import winston_loss, cifar100_loss, pascalpart_loss
+from dataset_loader import SemiSupDataset
+from utils import Progbar, find_folder, show_batch
 
 SIMPLE_CNN          = "Simple_CNN"
 RESNET_TL           = "Resnet_tl"
@@ -99,7 +99,7 @@ class RexLearnClassifier(ABC, nn.Module):
 		return next(self.model.parameters()).device
 
 	def get_transforms(self):
-		from transforms import TRANSFORMS
+		from .transforms import TRANSFORMS
 		transform_name = self.class_name + self.dataset
 		return TRANSFORMS[transform_name]
 

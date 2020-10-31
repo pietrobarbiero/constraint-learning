@@ -3,9 +3,9 @@ import os
 
 import torch
 
-from . import rexlearnclassifier as rx
-from . import dataset_loader as dl
-from .utils import find_folder, file_exists, get_model_path_name
+import rexlearnclassifier as rx
+import dataset_loader as dl
+from utils import find_folder, file_exists, get_model_path_name
 
 
 def main(model: str, dataset: str, train_dir: str, val_dir: str, test_dir: str = None, mode: str = "train",
