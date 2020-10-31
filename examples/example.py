@@ -36,16 +36,75 @@ class TwoLayerNet(torch.nn.Module):
         return y_pred
 
 
-class ManualLinearRegression(torch.nn.Module):
-    def __init__(self):
-        super().__init__()
-        # To make "a" and "b" real parameters of the model, we need to wrap them with nn.Parameter
-        self.a = torch.nn.Parameter(torch.randn(1, requires_grad=True, dtype=torch.float))
-        self.b = torch.nn.Parameter(torch.randn(1, requires_grad=True, dtype=torch.float))
+def BCECLoss(output, targets, constraint_weight):
+    c_sup = output.shape[0]
+    sup_loss = torch.nn.functional.binary_cross_entropy(output, targets, reduction="sum")
+    norm_sup_loss = sup_loss / c_sup
+    constr_loss = constraint_loss(output) / c_sup
+    tot_loss = norm_sup_loss + constraint_weight * constr_loss
+    return tot_loss, norm_sup_loss, constr_loss
 
-    def forward(self, x):
-        # Computes the outputs / predictions
-        return self.a + self.b * x
+
+def constraint_loss(output, mu=10, sum=True):
+    # MAIN CLASSES
+    ZERO = output[:, 0]
+    ONE = output[:, 1]
+    TWO = output[:, 2]
+    THREE = output[:, 3]
+    FOUR = output[:, 4]
+    FIVE = output[:, 5]
+    SIX = output[:, 6]
+    SEVEN = output[:, 7]
+    EIGHT = output[:, 8]
+    NINE = output[:, 9]
+
+    # ATTRIBUTE CLASSES
+    ODD = output[:, 10]
+    EVEN = output[:, 11]
+
+    # here we converted each FOL rule using the product T-Norm (no-residual)
+    loss_fol_product_tnorm = [
+        # 0) N(1,3,5,7,9) => ODD
+        (ONE * (1. - ODD)),
+        (THREE * (1. - ODD)),
+        (FIVE * (1. - ODD)),
+        (SEVEN * (1. - ODD)),
+        (NINE * (1. - ODD)),
+
+        # 1) N(0,2,4,6,8) => EVEN
+        (ZERO * (1. - EVEN)),
+        (TWO * (1. - EVEN)),
+        (FOUR * (1. - EVEN)),
+        (SIX * (1. - EVEN)),
+        (EIGHT * (1. - EVEN)),
+
+        # 16) XOR ON THE MAIN CLASSES
+        mu * (
+                (1 - ((ONE) * (1 - TWO) * (1 - THREE) * (1 - FOUR) * (1 - FIVE) * (1 - SIX) * (1 - SEVEN) * (1 - EIGHT) * (1 - NINE))) *
+                (1 - ((1 - ONE) * (TWO) * (1 - THREE) * (1 - FOUR) * (1 - FIVE) * (1 - SIX) * (1 - SEVEN) * (1 - EIGHT) * (1 - NINE))) *
+                (1 - ((1 - ONE) * (1 - TWO) * (THREE) * (1 - FOUR) * (1 - FIVE) * (1 - SIX) * (1 - SEVEN) * (1 - EIGHT) * (1 - NINE))) *
+                (1 - ((1 - ONE) * (1 - TWO) * (1 - THREE) * (FOUR) * (1 - FIVE) * (1 - SIX) * (1 - SEVEN) * (1 - EIGHT) * (1 - NINE))) *
+                (1 - ((1 - ONE) * (1 - TWO) * (1 - THREE) * (1 - FOUR) * (FIVE) * (1 - SIX) * (1 - SEVEN) * (1 - EIGHT) * (1 - NINE))) *
+                (1 - ((1 - ONE) * (1 - TWO) * (1 - THREE) * (1 - FOUR) * (1 - FIVE) * (SIX) * (1 - SEVEN) * (1 - EIGHT) * (1 - NINE))) *
+                (1 - ((1 - ONE) * (1 - TWO) * (1 - THREE) * (1 - FOUR) * (1 - FIVE) * (1 - SIX) * (SEVEN) * (1 - EIGHT) * (1 - NINE))) *
+                (1 - ((1 - ONE) * (1 - TWO) * (1 - THREE) * (1 - FOUR) * (1 - FIVE) * (1 - SIX) * (SEVEN) * (EIGHT) * (1 - NINE))) *
+                (1 - ((1 - ONE) * (1 - TWO) * (1 - THREE) * (1 - FOUR) * (1 - FIVE) * (1 - SIX) * (SEVEN) * (1 - EIGHT) * (NINE)))
+              ),
+
+        # 17) XOR ON THE ATTRIBUTE CLASSES
+        mu * (
+                (EVEN) * (1 - ODD) *
+                (1 - EVEN) * (ODD)
+        ),
+    ]
+
+    if sum:
+        losses = torch.sum(torch.stack(loss_fol_product_tnorm, dim=0), dim=1)
+    else:
+        losses = torch.stack(loss_fol_product_tnorm, dim=0)
+
+    loss_sum = torch.squeeze(torch.sum(losses, dim=0))
+    return loss_sum
 
 
 def main():
@@ -69,19 +128,12 @@ def main():
     din, dh, dout = X.shape[1], 20, y1h2.shape[1]
     model = TwoLayerNet(din, dh, dout)
 
-    # def my_loss(output, target):
-    #     loss = torch.abs(output-target)
-    #     loss = torch.sum(loss, dim=1)
-    #     loss = torch.mean(loss)
-    #     return loss
-    # criterion = my_loss
-
-    criterion = torch.nn.BCELoss()
+    # criterion = torch.nn.BCELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     model.eval()
     y_pred = model(x_train)
-    before_train = criterion(y_pred, y_train)
-    print('Test loss before training', before_train.item())
+    tot_loss, norm_sup_loss, constr_loss = BCECLoss(y_pred, y_train, 1)
+    print('Test loss before training', tot_loss.item())
 
     model.train()
     epoch = 1000
@@ -90,26 +142,37 @@ def main():
         # Forward pass
         y_pred = model(x_train)
         # Compute Loss
-        loss = criterion(y_pred, y_train)
+        tot_loss, norm_sup_loss, constr_loss = BCECLoss(y_pred, y_train, 0.2)
 
-        print('Epoch {}: train loss: {}'.format(epoch, loss.item()))  # Backward pass
-        loss.backward()
+        # compute accuracy
+        y_pred_d = y_pred > 0.5
+        accuracy = ((y_pred_d == y_train).sum(dim=1) == y_train.shape[1]).to(torch.float).mean()
+
+        print(f'Epoch {epoch}: '
+              f't-loss: {tot_loss.item()} '
+              f'| s-loss: {norm_sup_loss.item()} '
+              f'| c-loss: {constr_loss.item()} '
+              f'| train accuracy: {accuracy.detach()}')
+
+        # Backward pass
+        tot_loss.backward()
         optimizer.step()
 
-    y_pred_np = y_pred.detach().numpy()
-    y_pred_round = np.round(y_pred_np)
 
-    scores = np.corrcoef(y_pred_round.T)
-
+    # y_pred_np = y_pred.detach().numpy()
+    # y_pred_round = np.round(y_pred_np)
+    #
+    # scores = np.corrcoef(y_pred_round.T)
+    #
     # scores_even = scores[-1, :-1]
-    scores_even = scores[0, 1:]
-    alphas = softmax(scores_even)
-    betas = softmax(1-scores_even)
-    attention = np.stack((alphas, betas))
-
-    plt.figure()
-    sns.heatmap(attention)
-    plt.show()
+    # # scores_even = scores[0, 1:]
+    # alphas = softmax(scores_even)
+    # betas = softmax(1-scores_even)
+    # attention = np.stack((alphas, betas))
+    #
+    # plt.figure()
+    # sns.heatmap(attention)
+    # plt.show()
 
     return
 
