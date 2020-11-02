@@ -25,7 +25,9 @@ def main(model: str, dataset: str, train_dir: str, val_dir: str, test_dir: str =
 	# Models are saved in the model folder (if not given a folder "models" is searched)
 	if model_folder is None:
 		model_folder = "models"
-	model_folder = find_folder(model_folder)
+	# model_folder = find_folder(model_folder)
+	if not os.path.isdir(model_folder):
+		os.makedirs(model_folder)
 
 	# Name of the model depends on the parameters if not given
 	if model_name is not None:
@@ -178,20 +180,20 @@ if __name__ == "__main__":
 
 	base_path = '..'
 	model = rx.RESNET_FT
-	dataset = dl.CIFAR_100
+	dataset = dl.ANIMAL_DATASET
 	lr = 1e-4
 	sup_data_frac = 0.3
 	partially_labeled = 1.0
 	batch_size = 64
 	epochs = 100
 	device = "cuda:1" if torch.cuda.is_available() else "cpu"
-	extract_features = True
-	load_in_memory = True
+	extract_features = False
+	load_in_memory = False
 	main_classes = True
 	constr_weight = 0.0  # 3.0, 10.0]
-	train_dir = os.path.join("..", "data", "cifar_splits", "train")
-	val_dir = os.path.join("..", "data", "cifar_splits", "val")
-	test_dir = os.path.join("..", "data", "cifar_splits", "test")
+	train_dir = 'anim_test' #os.path.join("..", "data", "cifar_splits", "train")
+	val_dir = 'anim_test' #os.path.join("..", "data", "cifar_splits", "val")
+	test_dir = 'anim_test' #os.path.join("..", "data", "cifar_splits", "test")
 	mode = "train"
 	seed = 2
 

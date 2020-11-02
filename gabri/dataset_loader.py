@@ -81,7 +81,8 @@ class SemiSupDataset(ImageFolder):
         self._convert_targets()
         self.seed               = seed
         self.load_in_memory     = load_in_memory
-        self.supervision_mask   = self.get_supervision_mask()
+        # self.supervision_mask   = self.get_supervision_mask()
+        self.supervision_mask   = None
         self.main_classes       = main_classes
         self._loaded_samples: list = []
         if main_classes:
@@ -96,7 +97,8 @@ class SemiSupDataset(ImageFolder):
             sample, label = self._loaded_samples[idx], self.targets[idx]
         else:
             sample, label   = super().__getitem__(idx)[0], self.targets[idx]
-        supervised = self.supervision_mask[idx]
+        # supervised = self.supervision_mask[idx]
+        supervised = self.targets[idx]*0 + 1
         return sample, label, supervised
 
     def get_supervision_mask(self, mask_folder="masks", balanced=True):
@@ -216,7 +218,8 @@ class SemiSupDataset(ImageFolder):
 
     def reduce_to_main_classes(self):
         self.targets = self.targets[:, MAIN_CLASSES[self.dataset_name]]
-        self.supervision_mask = self.supervision_mask[:, MAIN_CLASSES[self.dataset_name]]
+        # self.supervision_mask = self.supervision_mask[:, MAIN_CLASSES[self.dataset_name]]
+        self.supervision_mask = None
 
 
 class ExtractFeaturesSemiSupDataset(SemiSupDataset):

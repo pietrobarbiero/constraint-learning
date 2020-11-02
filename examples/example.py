@@ -1,10 +1,10 @@
 import torch
-from scipy.special import softmax
 from sklearn.datasets import load_digits
-from sklearn.feature_selection import mutual_info_classif
-from sklearn.metrics import r2_score
 from sklearn.preprocessing import OneHotEncoder
 import numpy as np
+from scipy.special import softmax
+from sklearn.feature_selection import mutual_info_classif
+from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 import seaborn as sns
 

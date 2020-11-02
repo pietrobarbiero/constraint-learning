@@ -99,7 +99,7 @@ class RexLearnClassifier(ABC, nn.Module):
 		return next(self.model.parameters()).device
 
 	def get_transforms(self):
-		from .transforms import TRANSFORMS
+		from transforms import TRANSFORMS
 		transform_name = self.class_name + self.dataset
 		return TRANSFORMS[transform_name]
 
