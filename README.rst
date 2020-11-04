@@ -2,7 +2,7 @@ Constraint-based Learning with Neural Networks
 ==================================================
 |DOI|
 
-.. |DOI| image:: https://zenodo.org/badge/308299657.svg
+.. |DOI| image:: https://zenodo.org/badge/308299657.svg&style=for-the-badge
     :alt: Zenodo (.org)
     :target: https://zenodo.org/badge/latestdoi/308299657
 
