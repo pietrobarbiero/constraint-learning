@@ -1,5 +1,11 @@
 Constraint-based Learning with Neural Networks
 ==================================================
+|DOI|
+
+.. |DOI| image:: https://zenodo.org/badge/308299657.svg
+    :alt: Zenodo (.org)
+    :target: https://zenodo.org/badge/latestdoi/308299657
+
 
 Notebooks
 ----------
@@ -17,6 +23,21 @@ the implementation of learning of and with constraints in Pytorch.
 
 .. figure:: https://github.com/pietrobarbiero/constraint-learning/blob/master/img/learning_of_constraints.png
     :height: 200px
+
+Cite the notebooks!
+*********************
+If you find this repository useful, please consider citing::
+
+    @misc{barbiero2020constraint,
+        title={pietrobarbiero/constraint-learning: Absolutno},
+        DOI={10.5281/zenodo.4244055},
+        abstractNote={Learning with and of constraints examples.},
+        publisher={Zenodo},
+        author={Pietro Barbiero},
+        year={2020},
+        month={Nov}
+    }
+
 
 Theory
 --------
