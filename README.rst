@@ -2,9 +2,9 @@ Constraint-based Learning with Neural Networks
 ==================================================
 |DOI|
 
-.. |DOI| image:: https://zenodo.org/badge/308299657.svg?style=for-the-badge
+.. |DOI| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.4244088.svg?style=for-the-badge
     :alt: Zenodo (.org)
-    :target: https://zenodo.org/badge/latestdoi/308299657
+    :target: https://doi.org/10.5281/zenodo.4244088
 
 
 Notebooks
@@ -30,8 +30,8 @@ If you find this repository useful, please consider citing::
 
     @misc{barbiero2020constraint,
         title={pietrobarbiero/constraint-learning: Absolutno},
-        DOI={10.5281/zenodo.4244055},
-        abstractNote={Learning with and of constraints examples.},
+        DOI={10.5281/zenodo.4244088},
+        abstractNote={Constraint-based Learning with Neural Networks},
         publisher={Zenodo},
         author={Pietro Barbiero},
         year={2020},
