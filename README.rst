@@ -9,14 +9,14 @@ the implementation of learning of and with constraints in Pytorch.
 - `Learning with constraints <https://github.com/pietrobarbiero/constraint-learning/blob/master/notebooks/learning_with_constraints_digits.ipynb>`_:
   learn how to train a NN with human-driven constraints
 
-* - .. figure:: https://github.com/pietrobarbiero/constraint-learning/blob/master/img/learning_with_constraints.png
-        :height: 200px
+.. figure:: https://github.com/pietrobarbiero/constraint-learning/blob/master/img/learning_with_constraints.png
+    :height: 200px
 
 - `Learning of constraints <https://github.com/pietrobarbiero/constraint-learning/blob/master/notebooks/learning_of_constraints_digits.ipynb>`_:
   learn how to make a NN learn how to explain its predictions with logic
 
-* - .. figure:: https://github.com/pietrobarbiero/constraint-learning/blob/master/img/learning_of_constraints.png
-        :height: 200px
+.. figure:: https://github.com/pietrobarbiero/constraint-learning/blob/master/img/learning_of_constraints.png
+    :height: 200px
 
 Theory
 --------
